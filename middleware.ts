@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 // Paths that are always public — no password required
-const PUBLIC_PATHS = ["/comingsoon", "/api/waitlist", "/api/ping", "/api/metrics"];
+const PUBLIC_PATHS = ["/comingsoon", "/api/waitlist", "/api/ping", "/api/metrics", "/api/download"];
 
 function isPublic(pathname: string): boolean {
   return PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));

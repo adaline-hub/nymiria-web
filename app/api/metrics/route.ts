@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { safeGet, isConfigured } from "../../../lib/redis";
+import { safeGet, safeLrange, isConfigured } from "../../../lib/redis";
 
 export const runtime = "nodejs";
 
@@ -79,11 +79,39 @@ export async function GET(req: NextRequest) {
   );
   days.sort((a, b) => a.date.localeCompare(b.date));
 
+  // Proxied download stats
+  const [proxyTotal, recentRaw] = await Promise.all([
+    getRedisInt("proxy_downloads:total"),
+    safeLrange("proxy_downloads:recent", 0, 49),
+  ]);
+
+  const recentDownloads = recentRaw.map((r) => {
+    try { return JSON.parse(r) as { ts: string; asset: string; version: string; platform: string; country: string; ua: string }; }
+    catch { return null; }
+  }).filter(Boolean);
+
+  // Country + platform aggregates from recent list
+  const byCountry: Record<string, number> = {};
+  const byPlatform: Record<string, number> = {};
+  for (const ev of recentDownloads) {
+    if (!ev) continue;
+    byCountry[ev.country] = (byCountry[ev.country] ?? 0) + 1;
+    byPlatform[ev.platform] = (byPlatform[ev.platform] ?? 0) + 1;
+  }
+
   return NextResponse.json({
     storage: isConfigured() ? "connected" : "not configured",
     installs: { total: installs },
     launches: { total: launches },
     last14Days: days,
-    downloads: github,
+    downloads: {
+      ...github,
+      proxied: {
+        total: proxyTotal,
+        byCountry,
+        byPlatform,
+        recent: recentDownloads.slice(0, 20),
+      },
+    },
   });
 }

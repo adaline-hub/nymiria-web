@@ -45,6 +45,19 @@ export async function safeSet(key: string, value: string): Promise<void> {
   try { await set(key, value); } catch { /* non-critical */ }
 }
 
+/** Push to a list and trim to maxLen. No-op on error. */
+export async function safeLpush(key: string, value: string, maxLen = 500): Promise<void> {
+  try {
+    await redis("LPUSH", key, value);
+    await redis("LTRIM", key, 0, maxLen - 1);
+  } catch { /* non-critical */ }
+}
+
+/** Get range from a list. Returns [] on error. */
+export async function safeLrange(key: string, start: number, stop: number): Promise<string[]> {
+  try { return await redis<string[]>("LRANGE", key, start, stop); } catch { return []; }
+}
+
 export function isConfigured(): boolean {
   return !!(url && token);
 }
