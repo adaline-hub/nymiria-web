@@ -33,9 +33,9 @@ async function getGitHubDownloads() {
         if (n.endsWith(".sig") || n.endsWith(".json")) continue;
         vTotal += asset.download_count;
         grandTotal += asset.download_count;
-        const platform = n.includes("dmg") || n.includes("aarch64") ? "mac"
-          : n.includes("exe") || n.includes("setup") ? "windows"
-          : n.includes("appimage") || n.includes("deb") ? "linux"
+        const platform = n.includes(".dmg") || n.includes("aarch64") || n.endsWith(".app.tar.gz") ? "mac"
+          : n.includes("-setup.exe") || n.endsWith(".exe") ? "windows"
+          : n.endsWith(".appimage") || n.endsWith(".deb") ? "linux"
           : "other";
         platforms[platform] = (platforms[platform] ?? 0) + asset.download_count;
       }
