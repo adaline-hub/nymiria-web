@@ -20,25 +20,25 @@ export const INSTALL_COMMANDS: Record<OS, InstallCommand> = {
   mac: {
     os: "mac",
     label: "macOS",
-    command: "brew install --cask nymiria",
-    download: { label: "Download .dmg", href: "/download#mac" },
+    command: "curl -fsSL https://nymiria.com/install.sh | bash",
+    download: { label: "Download .dmg", href: "https://nymiria.com/api/download?platform=mac" },
   },
   windows: {
     os: "windows",
     label: "Windows",
-    command: "iwr -useb https://get.nymiria.com/install.ps1 | iex",
-    download: { label: "Download .msi", href: "/download#windows" },
+    command: "irm https://nymiria.com/install.ps1 | iex",
+    download: { label: "Download .exe", href: "https://nymiria.com/api/download?platform=windows" },
   },
   linux: {
     os: "linux",
     label: "Linux",
-    command: "curl -fsSL https://get.nymiria.com/install.sh | bash",
-    download: { label: "Download .AppImage", href: "/download#linux" },
+    command: "curl -fsSL https://nymiria.com/install.sh | bash",
+    download: { label: "Download .AppImage", href: "https://nymiria.com/api/download?platform=linux" },
   },
   unknown: {
     os: "unknown",
     label: "All platforms",
-    command: "curl -fsSL https://get.nymiria.com/install.sh | bash",
-    download: { label: "See all downloads", href: "/download" },
+    command: "curl -fsSL https://nymiria.com/install.sh | bash",
+    download: { label: "See all downloads", href: "https://nymiria.com/api/download" },
   },
 };

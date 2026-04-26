@@ -23,51 +23,64 @@ export function InstallBlock({ initialOS }: { initialOS: OS }) {
       await navigator.clipboard.writeText(cmd.command);
       setCopied(true);
       setTimeout(() => setCopied(false), 1400);
-    } catch {
-      /* clipboard blocked — do nothing */
-    }
+    } catch { /* clipboard blocked */ }
   };
 
   return (
     <div className="w-full max-w-2xl">
-      <div className="flex gap-1 mb-3 text-sm">
+      {/* OS tabs */}
+      <div className="flex gap-1 mb-3">
         {OS_ORDER.map((os) => (
           <button
             key={os}
             onClick={() => setActive(os)}
-            className={`px-3 py-1.5 rounded-md transition-colors ${
-              active === os
-                ? "bg-white/10 text-white"
-                : "text-neutral-400 hover:text-white hover:bg-white/5"
-            }`}
+            className="px-3 py-1.5 rounded-md text-xs font-medium transition-colors"
+            style={active === os ? {
+              background: "var(--accent-muted)",
+              color: "var(--accent)",
+              border: "1px solid var(--border-green)",
+            } : {
+              color: "var(--text-muted)",
+              border: "1px solid transparent",
+            }}
           >
             {INSTALL_COMMANDS[os].label}
           </button>
         ))}
       </div>
 
+      {/* Command line */}
       <div
-        className="flex items-center gap-3 px-4 py-4 rounded-lg border mono text-sm"
-        style={{ background: "var(--bg-elev)", borderColor: "var(--border)" }}
+        className="flex items-center gap-3 px-4 py-4 rounded-xl mono text-sm"
+        style={{
+          background: "var(--bg-card)",
+          border: "1px solid var(--border-green)",
+          boxShadow: "var(--shadow-glow)",
+        }}
       >
-        <span className="text-neutral-500 select-none">$</span>
-        <code className="flex-1 text-white break-all">{cmd.command}</code>
+        <span className="select-none" style={{ color: "var(--accent)" }}>$</span>
+        <code className="flex-1 break-all" style={{ color: "var(--text)" }}>{cmd.command}</code>
         <button
           onClick={copy}
-          className="shrink-0 px-3 py-1.5 rounded-md text-xs font-medium bg-white text-black hover:bg-neutral-200 transition-colors"
+          className="shrink-0 px-3 py-1.5 rounded-md text-xs font-semibold transition-all"
+          style={{
+            background: copied ? "var(--accent)" : "var(--accent-muted)",
+            color: copied ? "#000" : "var(--accent)",
+            border: "1px solid var(--border-green)",
+          }}
         >
-          {copied ? "Copied" : "Copy"}
+          {copied ? "Copied!" : "Copy"}
         </button>
       </div>
 
-      <div className="mt-3 text-sm text-neutral-400">
+      <div className="mt-3 text-xs" style={{ color: "var(--text-faint)" }}>
         or{" "}
-        <a href={cmd.download.href} className="underline hover:text-white">
+        <a href={cmd.download.href} className="underline transition-colors hover:text-white" style={{ color: "var(--text-muted)" }}>
           {cmd.download.label}
-        </a>{" "}
-        ·{" "}
-        <a href="/download" className="underline hover:text-white">
-          more install options
+        </a>
+        {" · "}
+        <a href="https://nymiria.com/api/download" className="underline transition-colors hover:text-white" style={{ color: "var(--text-muted)" }}>
+          all platforms
         </a>
       </div>
     </div>
