@@ -1,25 +1,15 @@
-import { kv } from '@vercel/kv';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: Request) {
-  try {
-    const { email } = await req.json();
+export async function POST(req: NextRequest) {
+  const { email } = await req.json().catch(() => ({}));
 
-    if (!email || typeof email !== 'string' || !email.includes('@')) {
-      return NextResponse.json({ error: 'Invalid email' }, { status: 400 });
-    }
-
-    const normalized = email.trim().toLowerCase();
-    const timestamp = Date.now();
-
-    // Store in a sorted set (score = timestamp) for ordered retrieval
-    await kv.zadd('waitlist', { score: timestamp, member: normalized });
-    // Also store signup time per email for detail lookup
-    await kv.hset('waitlist:meta', { [normalized]: timestamp });
-
-    return NextResponse.json({ ok: true });
-  } catch (err) {
-    console.error('[waitlist]', err);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+  if (!email || typeof email !== "string" || !email.includes("@")) {
+    return NextResponse.json({ error: "Invalid email" }, { status: 400 });
   }
+
+  // TODO: wire to email service (Loops, Resend, Mailchimp, etc.)
+  // For now, log and return success so the form works end-to-end.
+  console.log("[waitlist]", email);
+
+  return NextResponse.json({ ok: true });
 }

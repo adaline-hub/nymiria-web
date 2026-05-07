@@ -4,7 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Nymiria — The AI orchestrator that runs on your machine",
   description:
-    "Nymiria coordinates Claude, Codex, Gemini, and local models from a single desktop app. Works fully offline with Ollama. Your data never leaves your machine.",
+    "Nymiria coordinates Claude, Codex, Gemini, and local models from a single desktop app. Works fully offline with Ollama. In local mode, your data never leaves your machine.",
   openGraph: {
     title: "Nymiria",
     description:
