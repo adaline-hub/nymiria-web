@@ -13,6 +13,7 @@ export function middleware(req: NextRequest) {
   // Let public routes through unconditionally
   if (isPublic(pathname)) return NextResponse.next();
 
+  const username = process.env.SITE_USERNAME;
   const password = process.env.SITE_PASSWORD;
   if (!password) return NextResponse.next();
 
@@ -21,8 +22,11 @@ export function middleware(req: NextRequest) {
     const [scheme, encoded] = auth.split(" ");
     if (scheme === "Basic" && encoded) {
       const decoded = Buffer.from(encoded, "base64").toString("utf-8");
-      const [, pass] = decoded.split(":");
-      if (pass === password) return NextResponse.next();
+      const colonIdx = decoded.indexOf(":");
+      const user = decoded.slice(0, colonIdx);
+      const pass = decoded.slice(colonIdx + 1);
+      const userOk = !username || user === username;
+      if (userOk && pass === password) return NextResponse.next();
     }
   }
 
